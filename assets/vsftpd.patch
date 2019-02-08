@@ -1,0 +1,7 @@
+62,67d61
+< 		if ! ps -C vsftpd | grep -qs "${_PID}"
+< 		then
+< 			log_warning_msg "vsftpd failed - probably invalid config."
+< 			exit 1
+< 		fi
+< 

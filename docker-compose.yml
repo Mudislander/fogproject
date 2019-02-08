@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  fogserver:
+    image: linkat/fogproject:0.0.1
+    container_name: fogproject
+    environment:
+      IP: 192.168.1.225
+    ports:
+      - 80:80/tcp
+      - 69:69/tcp
+      - 69:69/udp
+      - 21:21/tcp
+#      - 443:443/tcp
+      - 9000:9000/tcp
+    restart: always
+    volumes:
+      - "<PATH_TO_LOCAL_IMAGES_FOLDER>:/images"
+      - "<PATH_TO_LOCAL_MYSQL_DATA_FOLDER>:/var/lib/mysql"
