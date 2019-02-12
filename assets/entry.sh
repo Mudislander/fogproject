@@ -39,7 +39,18 @@ if [ $IP ] && [ "${IP}" !=  "${ipaddress}" ] ; then
                                       /opt/fog/.fogsettings
   mysql -u root fog < dump.sql && rm -f dump.sql
 
+  ipaddress=$IP
 fi
+
+if [ -z $WEBSERVER_HTTP_PORT ] ; then
+    WEBSERVER_HTTP_PORT=80
+fi
+
+sed -i -E "s/^Listen (.*)/Listen ${WEBSERVER_HTTP_PORT}/" /etc/apache2/ports.conf
+sed -i -E "s/^<VirtualHost *:(.*)>/<VirtualHost *:${WEBSERVER_HTTP_PORT}>/" /etc/apache2/sites-enabled/001-fog.conf
+sed -i -E "s/chain http(.*)/chain http:\/\/${ipaddress}:${WEBSERVER_HTTP_PORT}\/fog\/service\/ipxe\/boot.php/" /tftpboot/default.ipxe
+sed -i -E "s/'WEB_HOST', \"(.*)\"/'WEB_HOST', \"${ipaddress}:${WEBSERVER_HTTP_PORT}\"/" /var/www/fog/lib/fog/config.class.php
+mysql -e "UPDATE globalSettings set settingValue='${ipaddress}:${WEBSERVER_HTTP_PORT}' WHERE settingKey='FOG_WEB_HOST'" fog
 
 
 /etc/init.d/xinetd start

@@ -19,6 +19,8 @@ RUN wget https://github.com/FOGProject/fogproject/archive/${VERSION}.tar.gz \
 # force redirect to FOG root URL from Apache base URL's
 COPY assets/index.php /var/www
 COPY assets/index.php /var/www/html
+RUN rm /var/www/html/index.html
+
 
 # patch vsftpd init file because start with failure
 ADD assets/vsftpd.patch .

@@ -40,7 +40,8 @@ docker build -t linkat/fogproject:$VERSION .
 
 The following environment variables must be defined:
 
-* **IP**. The IP address assigned to the Docker Host which will be run this container.
+* **IP**. (Mandatory) The IP address assigned to the Docker Host which will be run this container.
+* **WEBSERVER_HTTP_PORT**. (Optional) The Apache running port. Default value: 80.
 
 ### docker-run
 

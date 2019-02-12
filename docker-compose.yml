@@ -2,10 +2,11 @@ version: '3.4'
 
 services:
   fogserver:
-    image: linkat/fogproject:0.0.1
+    image: linkat/fogproject:1.0.1
     container_name: fogproject
     environment:
       IP: 192.168.1.225
+      WEBSERVER_HTTP_PORT: 80
     ports:
       - 80:80/tcp
       - 69:69/tcp
