@@ -18,7 +18,8 @@ if [ -z "$(ls -A /images)" ]; then
 fi
 
 chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
-chown -R fog:fog /images
+chown -R fog:root /images
+chmod -R 770 /images
 chown -R fog:fog /backup
 
 /etc/init.d/rsyslog start
