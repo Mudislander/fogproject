@@ -1,46 +1,38 @@
-FROM ubuntu:16.04
-MAINTAINER Guillem Tanyà <gtanya@opentrends.net>
+FROM ubuntu:latest
+MAINTAINER Eduard Istvan Sas <eduard.istvan.sas@gmail.com>
 
-RUN apt update && apt upgrade -y
+ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt install -y wget iproute2 software-properties-common language-pack-en jq
+ADD docker-entrypoint.sh /usr/local/bin/
+ADD fixChain.py /usr/local/bin
+ADD respond.txt /tmp
 
-ENV VERSION=1.5.5
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Bucharest /etc/localtime \
+ && echo "Europe/Bucharest" > /etc/timezone \
+ && apt-get update \
+ && apt-get -y dist-upgrade \
+ && apt-get update \
+ && apt-get install -y iproute2 git \
+# && ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/usr.sbin.mysqld \
+ && cd /tmp \
+ && git clone https://github.com/fogproject/fogproject.git fog/ \
+ && cd fog/bin \
+ && export LANG=C.UTF-8 \
+ && cat /tmp/respond.txt | bash ./installfog.sh -X \
+ && sed -i s/"manage-gids"/"manage-gids -p 32765"/g /etc/default/nfs-kernel-server \
+ && apt clean \
+ && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /tmp/* \
+ && tar czvf /tmp/tftpboot-content.tar.gz /tftpboot/*
 
-RUN wget https://github.com/FOGProject/fogproject/archive/${VERSION}.tar.gz \
- && tar xvfz ${VERSION}.tar.gz \
- && cd fogproject-${VERSION}/bin \
- && mkdir -p /backup \
- && bash ./installfog.sh  --autoaccept
+# Apache musthave env vars
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
 
-# remove obsolet pifdiles
-#RUN rm -f /var/run/fog/FOG*
+EXPOSE 21/tcp 80/tcp 111/tcp 2049/tcp 4045/tcp 8099/tcp 9098/tcp 34463/tcp 69/udp 111/udp 212/udp 2049/udp 4045/udp 34463/udp
 
-# force redirect to FOG root URL from Apache base URL's
-COPY assets/index.php /var/www
-COPY assets/index.php /var/www/html
-RUN rm /var/www/html/index.html
-
-
-# patch vsftpd init file because start with failure
-ADD assets/vsftpd.patch .
-RUN patch /etc/init.d/vsftpd vsftpd.patch && rm -f vsftpd.patch
-
-# remove FOG sources
-RUN rm -rf /fogproject-* /${VERSION}.tar.gz
-
-
-# saving default data
-RUN mkdir -p /opt/fog/default/
-RUN cp -rp /var/lib/mysql /opt/fog/default/
-RUN cp -rp /images /opt/fog/default/
-
-RUN touch /INIT
-ADD assets/entry.sh .
-CMD bash entry.sh
-
-
-
-
-
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
 

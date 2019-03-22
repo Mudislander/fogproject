@@ -1,66 +1,17 @@
-# FOG Project in Docker
+# fogproject-docker
 
-This project is maintained by [Linkat](http://linkat.xtec.cat).
+Please make sure that you have NFS support installed on the host and the modules nfs and nfsd are loaded. (In case of Ubuntu, you need the nfs-kernel-server package). If you intend to run the container on Ubuntu, you can achieve this by appending to /etc/modules.
+	
+	sudo echo "nfs" >> /etc/modules
+	sudo echo "nfsd" >> /etc/modules
+ 
+If one wants to run without --net host, then it will need the nf-conntrack-tftp and nf-nat-tftp modules loaded in the kernel. In this case, you're better off installing tftpd-hpa on the host and mounting /tftpboot as a volume, the container will populate the directory, but for the moment I can't figure out, how to put the internal tftpd to work properly as UDP packets are lost in the way back :/ 
+You will need to disable apparmor on mysql on the host if you want to run the built-in mysql server with
 
-In this repository there are provided the files for building a docker image for running the [FOG Project](https://fogproject.org/).
+	ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/usr.sbin.mysql
 
+The file start-fog.sh is a way to start the container. dhcpd is intended to run outside the container, hence the given configuration file.
+If you intend to run the database in another container, add 
+	--link your_mysql_instance:DB
+Great thanks to Tortuginator for the Python script!
 
-## DockerHub
-
-You can find the docker image releases at https://hub.docker.com/r/linkat/fogproject
-
-
-## Repository
-
-Public repository in GitLab: https://gitlab.com/linkatedu/fogproject
-
-## Releases
-
-Code releases are found at https://gitlab.com/linkatedu/fogproject/tags
-
-Docker image releases are found at https://hub.docker.com/r/linkat/fogproject/tags
-
-
-## Build
-
-The [Dockerfile](https://gitlab.com/linkatedu/fogproject/blob/master/Dockerfile) file defines all needed for building the image. It can be built with:
-
-```
-VERSION=0.0.1
-docker build -t linkat/fogproject:$VERSION .
-```
-
-
-**(!)** *The previous version code `0.0.1` is an example.*
-
-
-## Run
-
-### Environment parameters
-
-The following environment variables must be defined:
-
-* **IP**. (Mandatory) The IP address assigned to the Docker Host which will be run this container.
-* **WEBSERVER_HTTP_PORT**. (Optional) The Apache running port. Default value: 80.
-
-### docker-run
-
-If you want to mount a volume data for images and MySQL data, you can use:
-
-```
-docker run -d --restart=always -e IP=192.168.1.225 -p 80:80 -p 69:69/tcp -p 69:69/udp -p 21:21 -p 9000:9000 -v "<PATH_TO_LOCAL_IMAGES_FOLDER>":"/images" -v "<PATH_TO_LOCAL_MYSQL_DATA_FOLDER>":"/var/lib/mysql" --name fogproject linkat/fogproject:0.0.1
-```
-
-If not (not recommended), you can use
-
-```
-docker run -d --restart=always -e IP=192.168.1.225 -p 80:80 -p 69:69/tcp -p 69:69/udp -p 21:21 -p 9000:9000 --name fogproject linkat/fogproject:0.0.1
-```
-
-### docker-compose
-
-Or using [docker-compose.yml](https://gitlab.com/linkatedu/fogproject/blob/master/docker-compose.yml) file:
-
-```
-docker-compose up -d
-```
