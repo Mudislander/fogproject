@@ -2,10 +2,10 @@
 
 ## start docker-fog 
 
-FOG_DIR="/srv/fog"
+FOG_DIR="/mnt/cache/FOGserver"
 
 SERVER_IP="192.168.0.200"
-FOG_DIR=/srv/fog
+FOG_DIR=/mnt/cache/FOGserver
 
 docker run -id \
 -p $SERVER_IP:212:212/udp \
