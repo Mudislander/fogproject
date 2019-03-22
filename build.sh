@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build -t eddie303/fogproject .
+docker build -t mudislander/fogproject .
