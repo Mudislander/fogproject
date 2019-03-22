@@ -4,7 +4,7 @@
 
 FOG_DIR="/srv/fog"
 
-SERVER_IP="192.168.200.1"
+SERVER_IP="192.168.0.200"
 FOG_DIR=/srv/fog
 
 docker run -id \
@@ -30,7 +30,7 @@ docker run -id \
 -e DB_USER="fogusr" \
 -e DB_PASS="f0gp455t4" \
 -e DB_ROOTPASS="" \
--e EXTIP="192.168.200.1" \
+-e EXTIP="192.168.0.200" \
 --privileged --security-opt apparmor=eddie303-fogproject -e WEB_HOST_PORT=80 --name=fog \
--v $FOG_DIR:/transfer -v $FOG_DIR/opt:/opt/fog -v $FOG_DIR/images:/images -v /tftpboot:/tftpboot eddie303/fogproject
+-v $FOG_DIR:/transfer -v $FOG_DIR/opt:/opt/fog -v $FOG_DIR/images:/images -v /tftpboot:/tftpboot mudislander/fogproject
 
