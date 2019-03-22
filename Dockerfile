@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-MAINTAINER Eduard Istvan Sas <eduard.istvan.sas@gmail.com>
+MAINTAINER Mudislander <bruce.pauw@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -7,8 +7,8 @@ ADD docker-entrypoint.sh /usr/local/bin/
 ADD fixChain.py /usr/local/bin
 ADD respond.txt /tmp
 
-RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Bucharest /etc/localtime \
- && echo "Europe/Bucharest" > /etc/timezone \
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/London /etc/localtime \
+ && echo "Europe/London" > /etc/timezone \
  && apt-get update \
  && apt-get -y dist-upgrade \
  && apt-get update \
