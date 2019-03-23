@@ -19,7 +19,7 @@ fi
 
 chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
 # chown -R fog:root /images
-chown -R 1000:1000 /images
+chown -R 99:100 /images
 chmod -R 777 /images
 chown -R fog:fog /backup
 
