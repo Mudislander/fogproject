@@ -19,7 +19,7 @@ fi
 
 chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
 chown -R fog:root /images
-chmod -R 770 /images
+chmod -R 777 /images
 chown -R fog:fog /backup
 
 /etc/init.d/rsyslog start
